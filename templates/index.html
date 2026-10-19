@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Professional thermal bag quality assessment system for courier operations">
+    <title>{{ app_name }} - Professional Courier Assessment</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 7h-9a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                        <path d="M9 7V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v3"/>
+                    </svg>
+                    <div>
+                        <h1>{{ app_name }}</h1>
+                        <p class="subtitle">Professional Quality Assessment System</p>
+                    </div>
+                </div>
+                <div class="version-badge">v{{ version }}</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Upload Section -->
+            <section class="upload-section" id="uploadSection">
+                <div class="card upload-card">
+                    <div class="card-header">
+                        <h2>Upload Thermal Bag Image</h2>
+                        <p>Drop an image or click to select for AI-powered quality assessment</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="upload-area" id="uploadArea">
+                            <input type="file" id="imageInput" accept="image/*" hidden>
+                            <div class="upload-placeholder" id="uploadPlaceholder">
+                                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="17 8 12 3 7 8"/>
+                                    <line x1="12" y1="3" x2="12" y2="15"/>
+                                </svg>
+                                <h3>Drop image here or click to upload</h3>
+                                <p class="upload-hint">Supported formats: JPG, PNG, GIF, WebP (Max 16MB)</p>
+                                <button class="btn btn-primary" type="button" id="selectBtn">
+                                    Select Image
+                                </button>
+                            </div>
+                            <div class="image-preview hidden" id="imagePreview">
+                                <img id="previewImage" alt="Uploaded thermal bag">
+                                <button class="btn-remove" id="removeBtn" type="button" aria-label="Remove image">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="18" y1="6" x2="6" y2="18"/>
+                                        <line x1="6" y1="6" x2="18" y2="18"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary btn-large" id="evaluateBtn" disabled>
+                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                                Evaluate Bag Quality
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Loading State -->
+            <section class="loading-section hidden" id="loadingSection">
+                <div class="card">
+                    <div class="loading-content">
+                        <div class="spinner"></div>
+                        <h3>Analyzing Thermal Bag...</h3>
+                        <p>Our AI is evaluating the bag's condition using professional standards</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section hidden" id="resultsSection">
+                <div class="card results-card">
+                    <!-- Status Header -->
+                    <div class="status-header" id="statusHeader">
+                        <div class="status-icon" id="statusIcon"></div>
+                        <div>
+                            <h2 id="statusTitle">Assessment Complete</h2>
+                            <p id="statusMessage">Bag quality evaluation finished</p>
+                        </div>
+                        <div class="score-badge" id="scoreBadge"></div>
+                    </div>
+
+                    <!-- Detailed Results -->
+                    <div class="results-body">
+                        <!-- Category Scores -->
+                        <div class="category-scores">
+                            <h3>Detailed Assessment</h3>
+                            <div class="scores-grid" id="scoresGrid"></div>
+                        </div>
+
+                        <!-- Findings -->
+                        <div class="findings-section">
+                            <div class="findings-column">
+                                <h3 class="findings-title positive">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="20 6 9 17 4 12"/>
+                                    </svg>
+                                    Positive Findings
+                                </h3>
+                                <ul id="positiveFindings" class="findings-list"></ul>
+                            </div>
+                            <div class="findings-column">
+                                <h3 class="findings-title concerns">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <line x1="12" y1="8" x2="12" y2="12"/>
+                                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                                    </svg>
+                                    Areas of Concern
+                                </h3>
+                                <ul id="concernsFindings" class="findings-list"></ul>
+                            </div>
+                        </div>
+
+                        <!-- Critical Defects -->
+                        <div class="critical-defects hidden" id="criticalDefects">
+                            <h3 class="findings-title critical">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon points="10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                                    <line x1="12" y1="9" x2="12" y2="13"/>
+                                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                                </svg>
+                                Critical Defects
+                            </h3>
+                            <ul id="criticalList" class="findings-list"></ul>
+                        </div>
+
+                        <!-- Recommendation -->
+                        <div class="recommendation-box" id="recommendationBox">
+                            <h3>Professional Recommendation</h3>
+                            <p id="recommendationText"></p>
+                        </div>
+
+                        <!-- Metadata -->
+                        <div class="metadata">
+                            <span id="confidence"></span>
+                            <span id="timestamp"></span>
+                            <span id="modelInfo"></span>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="action-buttons">
+                            <button class="btn btn-secondary" id="evaluateAnotherBtn">
+                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="1 4 1 10 7 10"/>
+                                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+                                </svg>
+                                Evaluate Another Bag
+                            </button>
+                            <button class="btn btn-primary" id="downloadBtn">
+                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                                Download Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Error Section -->
+            <section class="error-section hidden" id="errorSection">
+                <div class="card error-card">
+                    <div class="error-content">
+                        <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="15" y1="9" x2="9" y2="15"/>
+                            <line x1="9" y1="9" x2="15" y2="15"/>
+                        </svg>
+                        <h3>Evaluation Failed</h3>
+                        <p id="errorMessage">An error occurred during the evaluation process.</p>
+                        <button class="btn btn-primary" id="retryBtn">Try Again</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Thermal Bag Quality Checker. Powered by Google Gemini AI.</p>
+            <p class="footer-note">Professional courier assessment system for operational excellence.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
